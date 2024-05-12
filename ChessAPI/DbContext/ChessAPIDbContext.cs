@@ -5,6 +5,7 @@ namespace ChessAPI.DbContext;
 
 public class ChessAPIDbContext: Microsoft.EntityFrameworkCore.DbContext
 {
+    // Define the tables
     public DbSet<Game> Games { get; set; }
     public DbSet<Piece> Pieces { get; set; }
 

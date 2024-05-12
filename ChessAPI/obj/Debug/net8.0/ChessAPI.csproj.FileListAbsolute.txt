@@ -119,9 +119,9 @@
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.ChessAPI.props
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/staticwebassets.pack.json
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/scopedcss/bundle/ChessAPI.styles.css
-/home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ChessAPI.csproj.Up2Date
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ChessAPI.dll
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/refint/ChessAPI.dll
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ChessAPI.pdb
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ChessAPI.genruntimeconfig.cache
 /home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ref/ChessAPI.dll
+/home/sebifp/devStuff/repos/ChessAPI/ChessAPI/obj/Debug/net8.0/ChessAPI.csproj.CopyComplete
