@@ -3,7 +3,6 @@ using ChessAPI.DTOs;
 using ChessAPI.Mappers;
 using ChessAPI.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChessAPI.Controllers;
 
