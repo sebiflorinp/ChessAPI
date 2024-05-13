@@ -14,4 +14,9 @@ public static class GameMapper
     {
         return new Game { BlackPlayer = gameDto.BlackPlayer, WhitePlayer = gameDto.WhitePlayer, TurnCount = 1 };
     }
+
+    public static Game ToGame(this GameUpdateDTO gameUpdateDto)
+    {
+        return new Game {TurnCount = gameUpdateDto.TurnCount};
+    }
 }

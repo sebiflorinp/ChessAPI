@@ -1,9 +1,10 @@
 using ChessAPI.DbContext;
 using ChessAPI.DTOs;
+using ChessAPI.Extensions;
 using ChessAPI.Mappers;
 using ChessAPI.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChessAPI.Controllers;
 
@@ -100,5 +101,59 @@ public class GameController: ControllerBase
         _context.SaveChangesAsync();
 
         return Ok();
+    }
+
+    // Used for updating a game
+    // It is supposed to update the turn counter by one and it also updates the checks and checkmates
+    // PUT: api/game/id
+    [HttpPut("{gameId}")]
+    public async Task<IActionResult> UpdateGame(int gameId, [FromBody] GameUpdateDTO gameUpdateDto)
+    {
+        // Check if the game exists
+        var game = await _context.Games.FindAsync(gameId);
+
+        if (game == null)
+        {
+            return NotFound();
+        }
+
+        // Update the turn counter
+        game.TurnCount = gameUpdateDto.TurnCount;
+
+        // Get all the pieces to avoid excessive calls to the db
+        List<Piece> pieces = await _context.Pieces.Where(p => p.GameId == gameId).ToListAsync();
+
+        // Check for checks
+        game.WhiteCheck = GameExtensions.IsCheck(pieces, "White");
+        game.BlackCheck = GameExtensions.IsCheck(pieces, "Black");
+
+        // Check for checkmates by seeing if there are any valid moves for each color
+        game.WhiteCheckmate = GameExtensions.IsCheckmate(pieces, "White");
+        game.BlackCheckmate = GameExtensions.IsCheckmate(pieces, "Black");
+
+        _context.Games.Update(game);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    // Used for deleting a game
+    // DELETE: api/game/id
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<Game>> DeleteGame(int id)
+    {
+        // Check if the game exists
+        var game = await _context.Games.FindAsync(id);
+
+        if (game == null)
+        {
+            return NotFound();
+        }
+
+        // Delete the game
+        _context.Games.Remove(game);
+        await _context.SaveChangesAsync();
+
+        return game;
     }
 }

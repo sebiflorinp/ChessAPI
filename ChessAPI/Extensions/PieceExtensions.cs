@@ -228,6 +228,7 @@ public static class PieceExtensions
                 // Add the positions covered if the Queen were a Bishop
                 piece.Type = "Bishop";
                 squares.AddRange(piece.GetCoveredSquares(pieces));
+                piece.Type = "Queen";
                 break;
 
             case "King":

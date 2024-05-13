@@ -20,4 +20,20 @@ public static class GameExtensions
         // Check if the king is in the covered squares
         return coveredSquares.Contains($"{king.File}{king.Rank}");
     }
+
+    public static bool IsCheckmate(List<Piece> pieces, string color)
+    {
+        // Get the pieces of the given color
+        List<Piece> piecesOfACertainColor = pieces.Where(p => p.Color == color).ToList();
+
+        // Find the valid moves of the pieces
+        List<Move> validMoves = new();
+        foreach (Piece piece in piecesOfACertainColor)
+        {
+            validMoves.AddRange(piece.GetPossibleMoves(pieces));
+        }
+
+        // If there are no valid moves then it is a checkmate
+        return validMoves.Count == 0;
+    }
 }
