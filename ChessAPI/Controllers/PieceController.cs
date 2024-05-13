@@ -15,6 +15,9 @@ public class PieceController: ControllerBase
     private readonly ChessAPIDbContext _context = new();
     private readonly List<string> _typesOfPieces = new List<string>(){"Pawn", "Rook", "Knight", "Bishop", "Queen", "King"};
 
+    // Get a piece by id
+    // Used to get the information about a certain piece
+    // GET: api/game/{gameId}/piece/{pieceId}
     [HttpGet("{pieceId}")]
     public async Task<ActionResult<Piece>> GetPiece(int gameId,int pieceId)
     {
@@ -30,6 +33,9 @@ public class PieceController: ControllerBase
         return piece;
     }
 
+    // Get all the pieces of a game
+    // Used to draw the board by knowing the position of each piece
+    // GET: api/game/{gameId}/piece
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Piece>>> GetPieces(int gameId)
     {
@@ -51,6 +57,10 @@ public class PieceController: ControllerBase
         return pieces;
     }
 
+    // Create a new piece
+    // Is supposed to be used by the FE to create the pieces at the beginning of the game in order to preserve SRP,
+    // it doesn't allow the user to add too many pieces of a certain type and color
+    // POST: api/game/{gameId}/piece
     [HttpPost]
     public async Task<ActionResult<Piece>> CreatePiece([FromBody] PieceDTO pieceDto, int gameId)
     {
@@ -149,6 +159,10 @@ public class PieceController: ControllerBase
         return piece;
     }
 
+    // Update a piece
+    // Used for moving a piece, it also checks that the move is possible, doesn't result in a check and is moved by the correct player
+    // It is the responsibility of the FE to update the turn counter
+    // PUT: api/game/{gameId}/piece/{pieceId}
     [HttpPut("{pieceId}")]
     public async Task<ActionResult<Piece>> UpdatePiece([FromBody] Move move, int gameId, int pieceId)
     {
@@ -173,12 +187,23 @@ public class PieceController: ControllerBase
             return NotFound("Piece does not exist");
         }
 
+        // Check if the correct player is moving depending on the turn count
+        var game = _context.Games
+            .FirstOrDefault(g => g.Id == gameId);
+        var movedPiece = pieces
+            .FirstOrDefault(p => p.Id == pieceId);
+        if (game.TurnCount % 2 == 0 && movedPiece.Color != "Black" || game.TurnCount % 2 == 1 && movedPiece.Color != "White")
+        {
+            return BadRequest("It is not your turn");
+        }
+
         // Get all the valid moves of the piece and check if the move is in the list of valid moves
         var validMoves = piece.GetPossibleMoves(pieces);
 
         // Update the piece if the move is in the list of valid moves
         piece.File = move.FinalPosition[0].ToString();
         piece.Rank = Convert.ToInt32(move.FinalPosition[1].ToString());
+
         await _context.SaveChangesAsync();
 
         return Ok(piece);

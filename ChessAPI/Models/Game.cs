@@ -12,6 +12,15 @@ public class Game
 
     public string BlackPlayer { get; set; } = null!;
 
+    // Game information
+    public bool WhiteCheck { get; set; } = false;
+
+    public bool BlackCheck { get; set; } = false;
+
+    public bool WhiteCheckmate { get; set; } = false;
+
+    public bool BlackCheckmate { get; set; } = false;
+
     // If it is odd then it is white's turn, otherwise black's turn
     public int TurnCount { get; set; }
 

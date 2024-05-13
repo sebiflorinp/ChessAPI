@@ -29,6 +29,7 @@ public class GameController: ControllerBase
     }
 
     // Used for creating a new game
+    // Single Responsibility Principle is broken because this endpoint also creates the pieces required to start a game of chess
     // POST: api/game
     [HttpPost]
     public async Task<IActionResult> StartGame([FromBody] GameDTO gameDto)
@@ -97,7 +98,6 @@ public class GameController: ControllerBase
         // Black King
         await _context.Pieces.AddAsync(new Piece() {Color = "Black", Type = "King", Rank = 8, File = "e", GameId = game.Id});
         _context.SaveChangesAsync();
-
 
         return Ok();
     }
