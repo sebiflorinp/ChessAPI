@@ -12,6 +12,8 @@ public class MoveController: ControllerBase
 {
     private readonly ChessAPIDbContext _context = new();
 
+    // Get all the possible moves of a piece
+    // GET: api/game/{gameId}/piece/{pieceId}/move
     [HttpGet]
     public async Task<ActionResult<List<Move>>> GetMovesByPieceId(int gameId, int pieceId)
     {

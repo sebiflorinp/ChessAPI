@@ -13,6 +13,7 @@ public class GameController: ControllerBase
 {
     private readonly ChessAPIDbContext _context = new();
 
+    // Used for getting information about a game
     // GET: api/game/id
     [HttpGet("{id}")]
     public async Task<ActionResult<Game>> GetGame(int id)
@@ -27,6 +28,7 @@ public class GameController: ControllerBase
         return game;
     }
 
+    // Used for creating a new game
     // POST: api/game
     [HttpPost]
     public async Task<IActionResult> StartGame([FromBody] GameDTO gameDto)

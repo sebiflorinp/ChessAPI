@@ -1,5 +1,6 @@
 using ChessAPI.DbContext;
 using ChessAPI.DTOs;
+using ChessAPI.Extensions;
 using ChessAPI.Mappers;
 using ChessAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -146,5 +147,40 @@ public class PieceController: ControllerBase
         await _context.SaveChangesAsync();
 
         return piece;
+    }
+
+    [HttpPut("{pieceId}")]
+    public async Task<ActionResult<Piece>> UpdatePiece([FromBody] Move move, int gameId, int pieceId)
+    {
+        // Check if the game exists
+        if (!_context.Games.Any(g => g.Id == gameId))
+        {
+            return NotFound("Game does not exits");
+        }
+
+        // Get all the pieces of the game to avoid excessive calls to the db
+        var pieces = _context.Pieces
+            .Where(p => p.GameId == gameId)
+            .ToList();
+
+        // Check if the piece exists in the game
+        var piece = pieces
+            .Where(p => p.GameId == gameId)
+            .FirstOrDefault(p => p.Id == pieceId);
+
+        if (piece == null)
+        {
+            return NotFound("Piece does not exist");
+        }
+
+        // Get all the valid moves of the piece and check if the move is in the list of valid moves
+        var validMoves = piece.GetPossibleMoves(pieces);
+
+        // Update the piece if the move is in the list of valid moves
+        piece.File = move.FinalPosition[0].ToString();
+        piece.Rank = Convert.ToInt32(move.FinalPosition[1].ToString());
+        await _context.SaveChangesAsync();
+
+        return Ok(piece);
     }
 }
