@@ -12,7 +12,7 @@ public class ChessAPIDbContext: Microsoft.EntityFrameworkCore.DbContext
     // Connect to the database
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseMySQL("Server=viaduct.proxy.rlwy.net;Port=26904;Database=railway;Uid=root;Pwd=KnZJiWQuWjvBhzEpYvuWLbyrmnLUgGWn;");
+        optionsBuilder.UseMySQL("Server=viaduct.proxy.rlwy.net;Port=32434;Database=railway;Uid=root;Pwd=kBcFrMpVGTePIXIEkjLweaowMXmxWmTw;");
     }
 
     // Define the relationships between the tables

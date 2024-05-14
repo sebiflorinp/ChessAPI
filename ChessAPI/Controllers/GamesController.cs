@@ -10,17 +10,18 @@ namespace ChessAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class GameController: ControllerBase
+public class GamesController: ControllerBase
 {
     private readonly ChessAPIDbContext _context = new();
 
     // Used for getting information about a game
-    // GET: api/game/id
+    // GET: api/Games/id
     [HttpGet("{id}")]
     public async Task<ActionResult<Game>> GetGame(int id)
     {
         var game = await _context.Games.FindAsync(id);
 
+        // Check if the game exists
         if (game == null)
         {
             return NotFound();
@@ -31,7 +32,7 @@ public class GameController: ControllerBase
 
     // Used for creating a new game
     // Single Responsibility Principle is broken because this endpoint also creates the pieces required to start a game of chess
-    // POST: api/game
+    // POST: api/Games
     [HttpPost]
     public async Task<IActionResult> StartGame([FromBody] GameDTO gameDto)
     {
@@ -105,7 +106,7 @@ public class GameController: ControllerBase
 
     // Used for updating a game
     // It is supposed to update the turn counter by one and it also updates the checks and checkmates
-    // PUT: api/game/id
+    // PUT: api/Games/id
     [HttpPut("{gameId}")]
     public async Task<IActionResult> UpdateGame(int gameId, [FromBody] GameUpdateDTO gameUpdateDto)
     {
@@ -134,11 +135,11 @@ public class GameController: ControllerBase
         _context.Games.Update(game);
         await _context.SaveChangesAsync();
 
-        return Ok();
+        return NoContent();
     }
 
     // Used for deleting a game
-    // DELETE: api/game/id
+    // DELETE: api/Games/id
     [HttpDelete("{id}")]
     public async Task<ActionResult<Game>> DeleteGame(int id)
     {
@@ -154,6 +155,6 @@ public class GameController: ControllerBase
         _context.Games.Remove(game);
         await _context.SaveChangesAsync();
 
-        return game;
+        return NoContent();
     }
 }

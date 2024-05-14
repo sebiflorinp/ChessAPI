@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 namespace ChessAPI.Controllers;
 
 [ApiController]
-[Route("api/game/{gameId}/piece/{pieceId}/[controller]")]
-public class MoveController: ControllerBase
+[Route("api/Games/{gameId}/piece/{pieceId}/[controller]")]
+public class MovesController: ControllerBase
 {
     private readonly ChessAPIDbContext _context = new();
 
     // Get all the possible moves of a piece, it is assumed that the moves are played on the player's turn
-    // GET: api/game/{gameId}/piece/{pieceId}/move
+    // GET: api/Games/{gameId}/Pieces/{pieceId}/Moves
     [HttpGet]
     public async Task<ActionResult<List<Move>>> GetMovesByPieceId(int gameId, int pieceId)
     {

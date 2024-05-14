@@ -391,6 +391,14 @@ public static class PieceExtensions
             pieces.First(p => p.File == move.InitialPosition[0].ToString() && p.Rank == Convert.ToInt32(move.FinalPosition[1].ToString())).Rank = Convert.ToInt32(move.InitialPosition[1].ToString());
         }
 
+        // Remove the moves that involve capturing the enemy king because it is not allowed
+        // Find the king and it's position
+        var king = pieces.FirstOrDefault(p => p.Type == "King" && p.Color != piece.Color);
+        var kingPosition = $"{king.File}{king.Rank}";
+
+        // Remove the moves
+        moves = moves.Where(m => m.FinalPosition != kingPosition).ToList();
+
         return moves;
     }
 }

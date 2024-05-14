@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ChessAPI.Controllers;
 
 [ApiController]
-[Route("api/game/{gameId}/[controller]")]
-public class PieceController: ControllerBase
+[Route("api/Games/{gameId}/[controller]")]
+public class PiecesController: ControllerBase
 {
 
     private readonly ChessAPIDbContext _context = new();
@@ -17,7 +17,7 @@ public class PieceController: ControllerBase
 
     // Get a piece by id
     // Used to get the information about a certain piece
-    // GET: api/game/{gameId}/piece/{pieceId}
+    // GET: api/Games/{gameId}/Pieces/{pieceId}
     [HttpGet("{pieceId}")]
     public async Task<ActionResult<Piece>> GetPiece(int gameId,int pieceId)
     {
@@ -35,7 +35,7 @@ public class PieceController: ControllerBase
 
     // Get all the pieces of a game
     // Used to draw the board by knowing the position of each piece
-    // GET: api/game/{gameId}/piece
+    // GET: api/Games/{gameId}/Pieces
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Piece>>> GetPieces(int gameId)
     {
@@ -60,7 +60,7 @@ public class PieceController: ControllerBase
     // Create a new piece
     // Is supposed to be used by the FE to create the pieces at the beginning of the game in order to preserve SRP,
     // it doesn't allow the user to add too many pieces of a certain type and color
-    // POST: api/game/{gameId}/piece
+    // POST: api/Games/{gameId}/Pieces
     [HttpPost]
     public async Task<ActionResult<Piece>> CreatePiece([FromBody] PieceDTO pieceDto, int gameId)
     {
@@ -141,6 +141,9 @@ public class PieceController: ControllerBase
         return CreatedAtAction("GetPiece", new { gameId = newPiece.GameId, pieceId = newPiece.Id }, newPiece);
     }
 
+    // Delete a piece
+    // Used to delete a piece when it is captured (it is already done by the UpdatePiece endpoint but this endpoint is needed if SRP is to be respected)
+    // DELETE: api/Games/{gameId}/Pieces/{pieceId}
     [HttpDelete("{pieceId}")]
     public async Task<ActionResult<Piece>> DeletePiece(int gameId, int pieceId)
     {
@@ -156,13 +159,14 @@ public class PieceController: ControllerBase
         _context.Pieces.Remove(piece);
         await _context.SaveChangesAsync();
 
-        return piece;
+        return NoContent();
     }
 
     // Update a piece
     // Used for moving a piece, it also checks that the move is possible, doesn't result in a check and is moved by the correct player
+    // Single Responsibility Principle is broken because the endpoint also deletes the captured piece.
     // It is the responsibility of the FE to update the turn counter
-    // PUT: api/game/{gameId}/piece/{pieceId}
+    // PUT: api/Games/{gameId}/Pieces/{pieceId}
     [HttpPut("{pieceId}")]
     public async Task<ActionResult<Piece>> UpdatePiece([FromBody] Move move, int gameId, int pieceId)
     {
@@ -200,12 +204,22 @@ public class PieceController: ControllerBase
         // Get all the valid moves of the piece and check if the move is in the list of valid moves
         var validMoves = piece.GetPossibleMoves(pieces);
 
+        // Check if there is any piece (should be the opposite color) in the final position
+        var pieceInTheFinalPosition = pieces
+            .FirstOrDefault(p => p.File == move.FinalPosition[0].ToString() && p.Rank == Convert.ToInt32(move.FinalPosition[1].ToString()));
+
+        // Delete the piece if there is a piece in the final position
+        if (pieceInTheFinalPosition != null)
+        {
+            _context.Pieces.Remove(pieceInTheFinalPosition);
+        }
+
         // Update the piece if the move is in the list of valid moves
         piece.File = move.FinalPosition[0].ToString();
         piece.Rank = Convert.ToInt32(move.FinalPosition[1].ToString());
 
         await _context.SaveChangesAsync();
 
-        return Ok(piece);
+        return NoContent();
     }
 }
